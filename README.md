@@ -2,11 +2,11 @@ To run the project
 
 install dependencies
 
-npm install
+  npm install
 
 start project 
 
-npx expo start
+  npx expo start
 
 Download expo go on your mobile phone 
 
