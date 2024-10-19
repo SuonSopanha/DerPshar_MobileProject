@@ -1,10 +1,10 @@
 To run the project
 
-- install dependencies
+install dependencies
 
 npm install
 
-- start project 
+start project 
 
 npx expo start
 
