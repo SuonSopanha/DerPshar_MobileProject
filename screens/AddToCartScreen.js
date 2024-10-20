@@ -4,7 +4,8 @@ import { RadioButton } from "react-native-paper"; // Import RadioButton
 
 const AddToCartScreen = () => {
   const [name, setName] = useState("");
-  const [location, setLocation] = useState("");
+  const [city, setCity] = useState("");  // City input
+  const [state, setState] = useState(""); // State input
   const [phoneNumber, setPhoneNumber] = useState("");
   const [totalAmount, setTotalAmount] = useState("");
   const [deliverBy, setDeliverBy] = useState("Pickup");
@@ -13,7 +14,8 @@ const AddToCartScreen = () => {
   const handleAddToCart = () => {
     console.log({
       name,
-      location,
+      city,
+      state,
       phoneNumber,
       totalAmount,
       deliverBy,
@@ -31,7 +33,7 @@ const AddToCartScreen = () => {
       />
 
       {/* Name Input */}
-      <Text style={styles.label}>Name:</Text>
+      <Text style={styles.label}>Name</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter your name"
@@ -39,17 +41,25 @@ const AddToCartScreen = () => {
         onChangeText={setName}
       />
 
-      {/* Location Input */}
-      <Text style={styles.label}>Location:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your location"
-        value={location}
-        onChangeText={setLocation}
-      />
+      {/* Location Input - City and State */}
+      <Text style={styles.label}>Location</Text>
+      <View style={styles.locationContainer}>
+        <TextInput
+          style={[styles.input, styles.halfInput]}
+          placeholder="City"
+          value={city}
+          onChangeText={setCity}
+        />
+        <TextInput
+          style={[styles.input, styles.halfInput]}
+          placeholder="State"
+          value={state}
+          onChangeText={setState}
+        />
+      </View>
 
       {/* Phone Number Input */}
-      <Text style={styles.label}>Phone Number:</Text>
+      <Text style={styles.label}>Phone Number</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter your phone number"
@@ -58,15 +68,21 @@ const AddToCartScreen = () => {
         onChangeText={setPhoneNumber}
       />
 
-      {/* Total Amount Input */}
-      <Text style={styles.label}>Total Amount:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter total amount"
-        keyboardType="numeric"
-        value={totalAmount}
-        onChangeText={setTotalAmount}
-      />
+      {/* Total Amount Input and Price Display */}
+      <Text style={styles.label}>Total Amount</Text>
+      <View style={styles.totalAmountContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter total amount"
+          keyboardType="numeric"
+          value={totalAmount}
+          onChangeText={setTotalAmount}
+        />
+        {/* Display Total Price */}
+        <Text style={styles.totalPrice}>
+          Total Price: ${totalAmount} {/* You can format this as needed */}
+        </Text>
+      </View>
 
       {/* Deliver By - Radio Buttons */}
       <Text style={styles.label}>Deliver By:</Text>
@@ -123,15 +139,34 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 6,
+    borderRadius: 12,
+    padding: 2,
+    paddingStart: 8,
     marginBottom: 10,
     fontSize: 12,
     backgroundColor: "lightgrey",
   },
+  halfInput: {
+    flex: 1,
+    marginRight: 10,
+  },
   label: {
     fontSize: 12,
     marginBottom: 5,
+  },
+  locationContainer: {
+    flexDirection: "row",
+    marginBottom: 4,
+  },
+  totalAmountContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  totalPrice: {
+    fontSize: 12,
+    marginLeft: 10,
   },
   radioRow: {
     flexDirection: "row",
@@ -147,7 +182,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 10,
   },
   buttonText: {
     color: "white",
