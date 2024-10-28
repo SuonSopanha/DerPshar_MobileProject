@@ -9,12 +9,20 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.0.4",
+    "@react-native-picker/picker": "^2.8.1",
+    "@react-navigation/bottom-tabs": "^6.6.1",
+    "@react-navigation/native": "^6.1.18",
     "expo": "~51.0.28",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
     "react-native": "0.74.5",
+<<<<<<< HEAD
     "react-native-paper": "^5.12.5",
     "twrnc": "^4.5.1"
+=======
+    "react-native-paper": "^5.12.5"
+>>>>>>> 84808129940555d3fb9ff13ddfd109c154286d4b
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
