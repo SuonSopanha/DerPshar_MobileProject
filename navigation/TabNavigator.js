@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -8,10 +9,11 @@ import CartScreen from '../screens/CartScreen';
 import DetailScreen from '../screens/DetailScreen';
 import PaymentScreen from '../screens/PaymentScreen';
 import RecieptScreen from '../screens/RecieptScreen';
-import StartScreen from '../screens/StartSrceen';
 import { Ionicons } from '@expo/vector-icons';
+import CustomHeader from '../components/CustomHeader';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 const TabNavigator = () => {
   return (
@@ -36,14 +38,13 @@ const TabNavigator = () => {
             iconName = focused ? 'card' : 'card-outline';
           } else if (route.name === 'Reciept') {
             iconName = focused ? 'document-text' : 'receipt-outline';
-          } else if (route.name === 'Start') {
-            iconName = focused ? 'play' : 'play-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: 'tomato',
         tabBarInactiveTintColor: 'gray',
+        headerShown: false, // Disable default header for TabNavigator
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
@@ -54,9 +55,20 @@ const TabNavigator = () => {
       <Tab.Screen name="Detail" component={DetailScreen} />
       <Tab.Screen name="Payment" component={PaymentScreen} />
       <Tab.Screen name="Reciept" component={RecieptScreen} />
-      <Tab.Screen name="Start" component={StartScreen} />
     </Tab.Navigator>
   );
 };
 
-export default TabNavigator;
+const StackNavigator = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        header: () => <CustomHeader />, // Custom header for all screens
+      }}
+    >
+      <Stack.Screen name="Main" component={TabNavigator} />
+    </Stack.Navigator>
+  );
+};
+
+export default StackNavigator;
