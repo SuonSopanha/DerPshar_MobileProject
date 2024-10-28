@@ -11,7 +11,7 @@ const ProductDetailScreen = () => {
           style={tw`w-12 h-12`}
         />
         <View style={tw`flex-col ml-2`}>
-      <Text style={tw`text-l font-bold`}>Der <Text style={tw`text-pink-500`}>Phsar</Text></Text>
+      <Text style={tw`text-lg font-bold`}>Der <Text style={tw`text-pink-500`}>Phsar</Text></Text>
       <Text style={tw`text-[10px] font-semibold italic `}>Everthing you need</Text>
       </View>
     </View>
@@ -20,7 +20,7 @@ const ProductDetailScreen = () => {
       <View style={tw`flex-row justify-between items-center mb-5`}>
         <Text style={tw`w-14`}></Text>
         <View style={tw`flex-col items-center`}>
-          <Text style={tw`text-l italic`}>Brand</Text>
+          <Text style={tw`text-lg italic`}>Brand</Text>
           <Text style={tw`text-xl font-bold`}>OWNTECH</Text>
         </View>
         {/* Star Background */}
