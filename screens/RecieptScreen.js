@@ -66,8 +66,8 @@ const RecieptScreen = () => {
 
           <View style={tw`flex-row items-center justify-between`}>
             <Image
-              source={require("../assets/image.png")} // Replace with your product image URL or local image
-              style={tw`w-10 h-10`}
+              source={require("../assets/virakbutham.png")} // Replace with your product image URL or local image
+              style={tw`w-8 h-8`}
             />
             <Text style={tw`text-lg font-bold flex-1 ml-3`}>
               ViraK Buntham Express
@@ -82,8 +82,8 @@ const RecieptScreen = () => {
 
           <View style={tw`flex-row items-center justify-between`}>
             <Image
-              source={require("../assets/image.png")} // Replace with your product image URL or local image
-              style={tw`w-10 h-10`}
+              source={require("../assets/abalogo.png")} // Replace with your product image URL or local image
+              style={tw`w-8 h-8`}
             />
             <Text style={tw`text-lg font-bold flex-1 ml-3`}>ABA BANK</Text>
           </View>

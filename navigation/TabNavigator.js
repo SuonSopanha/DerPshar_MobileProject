@@ -9,6 +9,7 @@ import CartScreen from '../screens/CartScreen';
 import DetailScreen from '../screens/DetailScreen';
 import PaymentScreen from '../screens/PaymentScreen';
 import RecieptScreen from '../screens/RecieptScreen';
+import TestScreen from '../screens/TestScreen';
 import { Ionicons } from '@expo/vector-icons';
 import CustomHeader from '../components/CustomHeader';
 
@@ -55,6 +56,7 @@ const TabNavigator = () => {
       <Tab.Screen name="Detail" component={DetailScreen} />
       <Tab.Screen name="Payment" component={PaymentScreen} />
       <Tab.Screen name="Reciept" component={RecieptScreen} />
+      {/* <Tab.Screen name="Test" component={TestScreen} /> */}
     </Tab.Navigator>
   );
 };
