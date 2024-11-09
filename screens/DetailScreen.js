@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useRoute } from "@react-navigation/native";
 import tw from 'twrnc';
 
 const ProductDetailScreen = () => {
@@ -8,6 +9,9 @@ const ProductDetailScreen = () => {
   const [selectedSize, setSelectedSize] = useState('L');
   const [selectedColor, setSelectedColor] = useState('black');
   const [showMore, setShowMore] = useState(false);
+
+  const route = useRoute();
+  const product = route.params?.item || {};
 
   const productAttributes = [
     { label: "Menu language", value: "Multiple languages" },
@@ -36,7 +40,7 @@ const ProductDetailScreen = () => {
       {/* Product Image */}
       <View style={tw`items-center mb-5`}>
         <Image
-          source={require('../assets/image.png')}
+          source={{ uri: product.images[0] }}
           style={tw`w-64 h-64 rounded-3xl`}
         />
       </View>
@@ -65,10 +69,14 @@ const ProductDetailScreen = () => {
       <View style={tw`bg-white rounded-md shadow-sm p-4 mb-6`}>
         <Text style={tw`text-xl font-bold mb-4 text-center text-gray-800`}>Product Detail</Text>
         
-        {productAttributes.slice(0, showMore ? productAttributes.length : 2).map((item, index) => (
+        {Object.entries(product).slice(0, showMore ? undefined : 2).map(([key, value], index) => (
           <View key={index} style={tw`flex-row justify-between mb-2`}>
-            <Text style={tw`text-base text-gray-600 flex-1 pr-4`}>{item.label}</Text>
-            <Text style={tw`text-base font-semibold text-gray-800 flex-1 text-right`}>{item.value}</Text>
+            <Text style={tw`text-base text-gray-600 flex-1 pr-4`}>
+              {key.replace(/([A-Z])/g, ' $1').trim()}
+            </Text>
+            <Text style={tw`text-base font-semibold text-gray-800 flex-1 text-right`}>
+              {typeof value === 'object' ? JSON.stringify(value) : value}
+            </Text>
           </View>
         ))}
 

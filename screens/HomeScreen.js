@@ -59,14 +59,13 @@ const HomeScreen = () => {
     Sports: ["sports-accessories"],
   };
 
-
   const [productList, setProductList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const navigation = useNavigation();
 
-  //fetch product 
+  //fetch product
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -175,7 +174,9 @@ const HomeScreen = () => {
                 <TouchableOpacity
                   key={idx}
                   style={tw`w-40 bg-white rounded-lg shadow-lg mx-2 p-4`}
-                  onPress={() => navigation.navigate("Detail")}
+                  onPress={() => navigation.navigate("Detail",{
+                    item: item
+                  })}
                 >
                   <Image
                     source={{ uri: item.thumbnail }}
@@ -209,7 +210,7 @@ const HomeScreen = () => {
                 style={tw`w-40 items-center justify-center bg-gray-200 rounded-xl mx-2 p-4`}
                 onPress={() =>
                   navigation.navigate("CategoryDetails", {
-                    category: category.name,
+                    categoryName: category.name, // Pass category name to filter products in CategoryDetails
                   })
                 }
               >
