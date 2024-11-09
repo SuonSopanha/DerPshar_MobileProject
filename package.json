@@ -19,6 +19,7 @@
     "react": "18.2.0",
     "react-native": "^0.74.5",
     "react-native-paper": "^5.12.5",
+    "react-native-swiper": "^1.6.0",
     "twrnc": "^4.5.1"
   },
   "devDependencies": {

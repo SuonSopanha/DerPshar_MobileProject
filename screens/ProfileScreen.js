@@ -73,33 +73,7 @@ const ProfilePage = () => {
       </View>
 
       {/* Change Password Section */}
-      <View style={tw`mb-8`}>
-        <Text style={tw`text-lg font-bold mb-4`}>Change Password</Text>
-
-        {/* New Password */}
-        <View style={tw`flex-row items-center mb-4`}>
-          <Icon name="lock-closed-outline" size={20} color="#ff1493" style={tw`mr-3`} />
-          <TextInput
-            style={tw`flex-1 border border-gray-300 rounded-lg p-2 bg-gray-200 text-sm`}
-            placeholder="New password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-        </View>
-
-        {/* Confirm Password */}
-        <View style={tw`flex-row items-center mb-4`}>
-          <Icon name="lock-closed-outline" size={20} color="#ff1493" style={tw`mr-3`} />
-          <TextInput
-            style={tw`flex-1 border border-gray-300 rounded-lg p-2 bg-gray-200 text-sm`}
-            placeholder="Confirm new password"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-        </View>
-      </View>
+      
 
       {/* Save Button */}
       <TouchableOpacity
