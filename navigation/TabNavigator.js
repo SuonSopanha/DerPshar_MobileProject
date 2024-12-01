@@ -12,6 +12,7 @@ import RecieptScreen from '../screens/RecieptScreen';
 import TestScreen from '../screens/TestScreen';
 import { Ionicons } from '@expo/vector-icons';
 import CustomHeader from '../components/CustomHeader';
+import ProfileScreenUpdate from '../screense/ProfileScreenUpdate';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -48,7 +49,8 @@ const TabNavigator = () => {
         headerShown: false, // Disable default header for TabNavigator
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
+      {/* <Tab.Screen name="Home" component={HomeScreen} /> */}
+      <Tab.Screen name="Home" component={ProfileScreenUpdate} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="AddToCart" component={AddToCartScreen} />
