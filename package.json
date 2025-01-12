@@ -27,7 +27,7 @@
     "twrnc": "^4.5.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
+    "@babel/core": "^7.25.2",
     "metro-config": "^0.81.0"
   },
   "private": true
