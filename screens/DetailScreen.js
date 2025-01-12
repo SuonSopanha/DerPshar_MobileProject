@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity,Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from "@react-navigation/native";
 import tw from 'twrnc';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { API_URL } from "@env";
 
 const ProductDetailScreen = () => {
   const navigation = useNavigation();
@@ -12,6 +15,16 @@ const ProductDetailScreen = () => {
 
   const route = useRoute();
   const product = route.params?.item || {};
+
+  const requiredKeys = ['title', 'category', 'price', 'rating'];
+
+    // Fields that should be displayed when 'See More' is clicked
+    const moreKeys = [
+      'description', 'stock', 'tags', 'brand', 'sku',
+      'weight', 'dimensions', 'warrantyInformation',
+      'shippingInformation', 'availabilityStatus'
+    ];
+  
 
   const productAttributes = [
     { label: "Menu language", value: "Multiple languages" },
@@ -24,6 +37,45 @@ const ProductDetailScreen = () => {
     { label: "Function", value: "Sleep monitoring, Exercise detection, Health detection" },
     { label: "Colour", value: "Black" },
   ];
+
+  const handleAddToCart = async () => {
+    const token = await AsyncStorage.getItem('jwtToken');
+    const userName = await AsyncStorage.getItem('userName');
+    const userId = await AsyncStorage.getItem('userId');
+
+    console.log(userId)
+
+    if (!token) {
+      Alert.alert('Error', 'You must be logged in to add items to the cart.');
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/api/carts`, // Replace with your Strapi API endpoint
+        {
+          data : {
+            user_id: parseInt(userId),  // Make sure userId,  // Make sure userId is valid
+            product_id: product.id,  // Make sure productId is valid
+            quantity: 1
+          }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add JWT token in the header for authentication
+          },
+        }
+      );
+
+      if (response.data) {
+        Alert.alert('Success', 'Product added to cart!');
+        navigation.goBack(); // Go back to the previous screen
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Failed to add product to cart. Please try again.');
+    }
+  };
 
   return (
     <ScrollView style={tw`flex-1 bg-white p-4`}>
@@ -47,10 +99,10 @@ const ProductDetailScreen = () => {
 
       {/* Product Title and Price */}
       <View style={tw`flex-row justify-between items-center mb-4`}>
-        <Text style={tw`text-2xl font-bold`}>OWNTECH</Text>
+        <Text style={tw`text-2xl font-bold`}>{product.title}</Text>
         <View style={tw`relative flex justify-center items-center`}>
           <Image source={require('../assets/VectorStar.png')} style={tw`w-16 h-16`} />
-          <Text style={tw`absolute text-2xl font-bold text-red-500`}>290$</Text>
+          <Text style={tw`absolute text-2xl font-bold text-red-500`}>{product.price}$</Text>
         </View>
       </View>
 
@@ -69,7 +121,9 @@ const ProductDetailScreen = () => {
       <View style={tw`bg-white rounded-md shadow-sm p-4 mb-6`}>
         <Text style={tw`text-xl font-bold mb-4 text-center text-gray-800`}>Product Detail</Text>
         
-        {Object.entries(product).slice(0, showMore ? undefined : 2).map(([key, value], index) => (
+        {Object.entries(product)
+        .filter(([key]) => requiredKeys.includes(key) || showMore && moreKeys.includes(key))
+        .map(([key, value], index) => (
           <View key={index} style={tw`flex-row justify-between mb-2`}>
             <Text style={tw`text-base text-gray-600 flex-1 pr-4`}>
               {key.replace(/([A-Z])/g, ' $1').trim()}
@@ -103,7 +157,7 @@ const ProductDetailScreen = () => {
       {/* Add to Cart Button */}
       <TouchableOpacity
         style={tw`bg-pink-500 py-4 rounded-full shadow-lg mb-10`}
-        onPress={() => navigation.navigate('AddToCart')}
+        onPress={handleAddToCart}
       >
         <Text style={tw`text-white font-semibold text-base text-center`}>Add to Cart</Text>
       </TouchableOpacity>

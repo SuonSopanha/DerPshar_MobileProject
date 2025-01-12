@@ -1,17 +1,20 @@
-import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from '../screens/HomeScreen';
-import SettingsScreen from '../screens/SettingsScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import AddToCartScreen from '../screens/AddToCartScreen';
-import CartScreen from '../screens/CartScreen';
-import DetailScreen from '../screens/DetailScreen';
-import PaymentScreen from '../screens/PaymentScreen';
-import RecieptScreen from '../screens/RecieptScreen';
-import TestScreen from '../screens/TestScreen';
-import { Ionicons } from '@expo/vector-icons';
-import CustomHeader from '../components/CustomHeader';
+import React from "react";
+import { useState } from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import HomeScreen from "../screens/HomeScreen";
+import SettingsScreen from "../screens/SettingsScreen";
+import ProfileScreen from "../screens/ProfileScreen";
+import AddToCartScreen from "../screens/AddToCartScreen";
+import CartScreen from "../screens/CartScreen";
+import DetailScreen from "../screens/DetailScreen";
+import PaymentScreen from "../screens/PaymentScreen";
+import RecieptScreen from "../screens/RecieptScreen";
+import TestScreen from "../screens/TestScreen";
+import LoginScreen from "../screens/LoginScreen";
+import SignUpScreen from "../screens/SignUpScreen";
+import { Ionicons } from "@expo/vector-icons";
+import CustomHeader from "../components/CustomHeader";
 import ProfileScreenUpdate from '../screens/ProfileScreenUpdate';
 import RecieptScreenUpdate from '../screens/RecieptScreenUpdate';
 
@@ -25,52 +28,73 @@ const TabNavigator = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Settings') {
-            iconName = focused ? 'settings' : 'settings-outline';
-          } else if (route.name === 'Profile') {
-            iconName = focused ? 'person' : 'person-outline';
-          } else if (route.name === 'AddToCart') {
-            iconName = focused ? 'cart' : 'cart-outline';
-          } else if (route.name === 'Cart') {
-            iconName = focused ? 'basket' : 'basket-outline';
-          } else if (route.name === 'Detail') {
-            iconName = focused ? 'information-circle' : 'information-circle-outline';
-          } else if (route.name === 'Payment') {
-            iconName = focused ? 'card' : 'card-outline';
-          } else if (route.name === 'Reciept') {
-            iconName = focused ? 'document-text' : 'receipt-outline';
+          if (route.name === "Home") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "Settings") {
+            iconName = focused ? "settings" : "settings-outline";
+          } else if (route.name === "Profile") {
+            iconName = focused ? "person" : "person-outline";
+          } else if (route.name === "Order") {
+            iconName = focused ? "cart" : "cart-outline";
+          } else if (route.name === "Cart") {
+            iconName = focused ? "basket" : "basket-outline";
+          } else if (route.name === "Detail") {
+            iconName = focused
+              ? "information-circle"
+              : "information-circle-outline";
+          } else if (route.name === "Payment") {
+            iconName = focused ? "card" : "card-outline";
+          } else if (route.name === "Reciept") {
+            iconName = focused ? "document-text" : "receipt-outline";
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: 'tomato',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: "tomato",
+        tabBarInactiveTintColor: "gray",
         headerShown: false, // Disable default header for TabNavigator
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen}/>
       <Tab.Screen name="Settings" component={SettingsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="AddToCart" component={AddToCartScreen} />
+      <Tab.Screen name="Order" component={AddToCartScreen} />
       <Tab.Screen name="Cart" component={CartScreen} />
       <Tab.Screen name="Detail" component={DetailScreen} />
       <Tab.Screen name="Payment" component={PaymentScreen} />
-      <Tab.Screen name="Reciept" component={RecieptScreen} />
+      <Tab.Screen name="Reciept" component={ProfileScreenUpdate} />
       <Tab.Screen name="Test" component={TestScreen} />
+      <Tab.Screen name="OrderList" component={ProfileScreenUpdate} />
+      <Tab.Screen name="OrderDetail" component={RecieptScreenUpdate} />
     </Tab.Navigator>
   );
 };
 
 const StackNavigator = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   return (
     <Stack.Navigator
       screenOptions={{
         header: () => <CustomHeader />, // Custom header for all screens
       }}
     >
-      <Stack.Screen name="Main" component={TabNavigator} />
+      {!isLoggedIn ? (
+        <>
+          <Stack.Screen name="Login" options={{ headerShown: false }}>
+            {(props) => (
+              <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} />
+            )}
+          </Stack.Screen>
+          <Stack.Screen
+            name="SignUp"
+            component={SignUpScreen}
+            options={{ headerShown: false, title: "Sign Up" }} // Optional: Show header for Sign Up screen
+          />
+        </>
+      ) : (
+        <Stack.Screen name="Main" component={TabNavigator} />
+      )}
     </Stack.Navigator>
   );
 };
