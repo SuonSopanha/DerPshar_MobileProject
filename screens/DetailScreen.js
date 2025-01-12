@@ -99,10 +99,10 @@ const ProductDetailScreen = () => {
 
       {/* Product Title and Price */}
       <View style={tw`flex-row justify-between items-center mb-4`}>
-        <Text style={tw`text-2xl font-bold`}>OWNTECH</Text>
+        <Text style={tw`text-2xl font-bold`}>{product.title}</Text>
         <View style={tw`relative flex justify-center items-center`}>
           <Image source={require('../assets/VectorStar.png')} style={tw`w-16 h-16`} />
-          <Text style={tw`absolute text-2xl font-bold text-red-500`}>290$</Text>
+          <Text style={tw`absolute text-2xl font-bold text-red-500`}>{product.price}$</Text>
         </View>
       </View>
 

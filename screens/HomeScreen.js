@@ -193,10 +193,12 @@ const HomeScreen = () => {
                   </View>
                   <TouchableOpacity
                     style={tw`mt-2 bg-pink-500 py-2 rounded-full`}
-                    onPress={() => navigation.navigate("AddToCart")}
+                    onPress={() => navigation.navigate("Detail",{
+                    item: item
+                  })}
                   >
                     <Text style={tw`text-white text-center font-semibold`}>
-                      Add to Cart
+                      View Detail
                     </Text>
                   </TouchableOpacity>
                 </TouchableOpacity>

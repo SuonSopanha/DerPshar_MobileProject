@@ -13,8 +13,10 @@ import { useRoute } from "@react-navigation/native";
 import tw from "twrnc"; // Import tw from twrnc
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { useStripe } from "@stripe/stripe-react-native";
 
 import { API_URL } from "@env";
+import { STRIPE_SERVICE_URL } from "@env";
 
 const AddToCartScreen = () => {
   const [name, setName] = useState("");
@@ -25,6 +27,9 @@ const AddToCartScreen = () => {
   const [totalAmount, setTotalAmount] = useState("");
   const [deliverBy, setDeliverBy] = useState("Pickup");
   const [payBy, setPayBy] = useState("Credit Card");
+
+  const [loading, setLoading] = useState(false);
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   const route = useRoute();
   const product = route.params?.cartData || {};
@@ -37,6 +42,11 @@ const AddToCartScreen = () => {
       setCartItems(mappedProduct);
     }
   }, [product]);
+
+
+  // useEffect(() => {
+  //   initializePaymentSheet();
+  // },[]);
 
   // Remove Item from Cart
   const handleRemoveItem = (id) => {
@@ -52,6 +62,23 @@ const AddToCartScreen = () => {
         Alert.alert("Error", "Missing token or user ID");
         return;
       }
+
+      if(payBy === 'Credit Card'){
+        const initializationSuccess = await initializePaymentSheet();
+        if(!initializationSuccess){
+          Alert.alert("An Error Ocuured")
+          return
+        }
+
+        const isPaySuccess = await openPaymentSheet(); 
+        if(!isPaySuccess){
+          Alert.alert("Payment Cancel")
+            return
+        }
+      }else if (payBy === 'Bank Transfer'){
+        console.log("transfer via bank")
+      }
+
 
       const response = await axios.post(
         `${API_URL}/api/orders`,
@@ -93,6 +120,13 @@ const AddToCartScreen = () => {
             },
           }
         );
+
+        await axios.delete(`${API_URL}/api/carts/${product[i].documentId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+
       }
 
       // Alert user on success
@@ -120,6 +154,71 @@ const AddToCartScreen = () => {
       0
     )
     .toFixed(2);
+
+    const initializePaymentSheet = async () => {
+      try {
+        setLoading(true);
+  
+        const calculateTotal = cartItems
+        .reduce(
+          (total, item, index) =>
+            total + parseFloat(item.price * product[index].quantity),
+          0
+        )
+        .toFixed(2);
+        console.log(calculateTotal)
+        // Fetch payment sheet parameters from the backend
+        const response = await axios.post(`${STRIPE_SERVICE_URL}/create-payment-intent`, {
+          amount: calculateTotal * 100, // Amount in cents (e.g., $10 = 1000 cents)
+          currency: "usd",
+        });
+  
+        const { paymentIntent, ephemeralKey, customer } = response.data;
+  
+        // Initialize the Payment Sheet
+        const { error } = await initPaymentSheet({
+          paymentIntentClientSecret: paymentIntent,
+          customerEphemeralKeySecret: ephemeralKey,
+          customerId: customer,
+          merchantDisplayName: "Your Business Name",
+        });
+  
+        if (error) {
+          console.error("Payment sheet initialization failed:", error);
+          Alert.alert("Error", error.message);
+          return false
+        } else {
+          return true
+        }
+      } catch (error) {
+        console.error("Error initializing payment sheet:", error);
+        Alert.alert("Error", "Unable to initialize payment sheet.");
+        return false
+      } finally {
+        setLoading(false);
+      }
+    };
+
+  
+    const openPaymentSheet = async () => {
+      try {
+        // Present the Payment Sheet to the user
+        const { error } = await presentPaymentSheet();
+  
+        if (error) {
+          console.error("Payment failed:", error);
+          Alert.alert("Error", error.message);
+          return false
+        } else {
+          Alert.alert("Success", "Your payment was successful!");
+          return true
+        }
+      } catch (error) {
+        console.error("Error presenting payment sheet:", error);
+        Alert.alert("Error", "Unable to complete payment.");
+        return false
+      }
+    };
 
   return (
     <ScrollView contentContainerStyle={tw`p-5`}>
@@ -238,7 +337,7 @@ const AddToCartScreen = () => {
             </View>
             <View style={tw`flex-row items-center mb-4`}>
               <RadioButton value="Bank Transfer" color="#ff1493" />
-              <Text style={tw`ml-2 text-sm`}>Bank Transfer</Text>
+              <Text style={tw`ml-2 text-sm`}>Bakong</Text>
             </View>
           </RadioButton.Group>
 
