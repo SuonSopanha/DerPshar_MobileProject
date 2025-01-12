@@ -40,7 +40,7 @@ const CartScreen = () => {
       setLoading(true);
       setProducts([]); // Clear previous products to avoid duplicates
       const response = await axios.get(
-        `${API_URL}/api/carts?user_id=${userId}`,
+        `${API_URL}/api/carts?filters[user_id][$eq]=${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

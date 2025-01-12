@@ -62,8 +62,10 @@ const TabNavigator = () => {
       <Tab.Screen name="Cart" component={CartScreen} />
       <Tab.Screen name="Detail" component={DetailScreen} />
       <Tab.Screen name="Payment" component={PaymentScreen} />
-      <Tab.Screen name="Reciept" component={RecieptScreen} />
+      <Tab.Screen name="Reciept" component={ProfileScreenUpdate} />
       <Tab.Screen name="Test" component={TestScreen} />
+      <Tab.Screen name="OrderList" component={ProfileScreenUpdate} />
+      <Tab.Screen name="OrderDetail" component={RecieptScreenUpdate} />
     </Tab.Navigator>
   );
 };

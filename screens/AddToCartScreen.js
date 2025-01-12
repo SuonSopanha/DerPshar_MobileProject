@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  ActivityIndicator ,
   Alert,
 } from "react-native";
 import { RadioButton } from "react-native-paper";
@@ -43,7 +44,6 @@ const AddToCartScreen = () => {
     }
   }, [product]);
 
-
   // useEffect(() => {
   //   initializePaymentSheet();
   // },[]);
@@ -55,6 +55,7 @@ const AddToCartScreen = () => {
 
   const handleOrder = async () => {
     try {
+      setLoading(true);
       const token = await AsyncStorage.getItem("jwtToken");
       const user_id = await AsyncStorage.getItem("userId");
 
@@ -63,22 +64,21 @@ const AddToCartScreen = () => {
         return;
       }
 
-      if(payBy === 'Credit Card'){
+      if (payBy === "Credit Card") {
         const initializationSuccess = await initializePaymentSheet();
-        if(!initializationSuccess){
-          Alert.alert("An Error Ocuured")
-          return
+        if (!initializationSuccess) {
+          Alert.alert("An Error Ocuured");
+          return;
         }
 
-        const isPaySuccess = await openPaymentSheet(); 
-        if(!isPaySuccess){
-          Alert.alert("Payment Cancel")
-            return
+        const isPaySuccess = await openPaymentSheet();
+        if (!isPaySuccess) {
+          Alert.alert("Payment Cancel");
+          return;
         }
-      }else if (payBy === 'Bank Transfer'){
-        console.log("transfer via bank")
+      } else if (payBy === "Bank Transfer") {
+        console.log("transfer via bank");
       }
-
 
       const response = await axios.post(
         `${API_URL}/api/orders`,
@@ -102,16 +102,16 @@ const AddToCartScreen = () => {
         }
       );
 
-
+      console.log(response.data);
       //loop through the cartItem and post to orderItems
       for (var i = 0; i < cartItems.length; i++) {
         await axios.post(
           `${API_URL}/api/order-items`,
           {
             data: {
-              order_id : response.data.id,
-              product_id : cartItems[i].id,
-              quantity : product[i].quantity,
+              order_id: response.data.data.id,
+              product_id: cartItems[i].id,
+              quantity: product[i].quantity,
             },
           },
           {
@@ -121,16 +121,16 @@ const AddToCartScreen = () => {
           }
         );
 
-        await axios.delete(`${API_URL}/api/carts/${product[i].documentId}`,{
+        await axios.delete(`${API_URL}/api/carts/${product[i].documentId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
-          }
+          },
         });
-
       }
 
       // Alert user on success
       Alert.alert("Success", "Order successfully placed!");
+      setLoading(false);
     } catch (error) {
       // Handle errors gracefully
       console.error(
@@ -144,6 +144,7 @@ const AddToCartScreen = () => {
         error.response?.data?.error?.message ||
           "An unexpected error occurred. Please try again."
       );
+      setLoading(false);
     }
   };
 
@@ -155,70 +156,72 @@ const AddToCartScreen = () => {
     )
     .toFixed(2);
 
-    const initializePaymentSheet = async () => {
-      try {
-        setLoading(true);
-  
-        const calculateTotal = cartItems
+  const initializePaymentSheet = async () => {
+    try {
+      setLoading(true);
+
+      const calculateTotal = cartItems
         .reduce(
           (total, item, index) =>
             total + parseFloat(item.price * product[index].quantity),
           0
         )
         .toFixed(2);
-        console.log(calculateTotal)
-        // Fetch payment sheet parameters from the backend
-        const response = await axios.post(`${STRIPE_SERVICE_URL}/create-payment-intent`, {
+      console.log(calculateTotal);
+      // Fetch payment sheet parameters from the backend
+      const response = await axios.post(
+        `${STRIPE_SERVICE_URL}/create-payment-intent`,
+        {
           amount: calculateTotal * 100, // Amount in cents (e.g., $10 = 1000 cents)
           currency: "usd",
-        });
-  
-        const { paymentIntent, ephemeralKey, customer } = response.data;
-  
-        // Initialize the Payment Sheet
-        const { error } = await initPaymentSheet({
-          paymentIntentClientSecret: paymentIntent,
-          customerEphemeralKeySecret: ephemeralKey,
-          customerId: customer,
-          merchantDisplayName: "Your Business Name",
-        });
-  
-        if (error) {
-          console.error("Payment sheet initialization failed:", error);
-          Alert.alert("Error", error.message);
-          return false
-        } else {
-          return true
         }
-      } catch (error) {
-        console.error("Error initializing payment sheet:", error);
-        Alert.alert("Error", "Unable to initialize payment sheet.");
-        return false
-      } finally {
-        setLoading(false);
-      }
-    };
+      );
 
-  
-    const openPaymentSheet = async () => {
-      try {
-        // Present the Payment Sheet to the user
-        const { error } = await presentPaymentSheet();
-  
-        if (error) {
-          console.error("Payment failed:", error);
-          Alert.alert("Error", error.message);
-          return false
-        } else {
-          Alert.alert("Success", "Your payment was successful!");
-          return true
-        }
-      } catch (error) {
-        console.error("Error presenting payment sheet:", error);
-        Alert.alert("Error", "Unable to complete payment.");
-        return false
+      const { paymentIntent, ephemeralKey, customer } = response.data;
+
+      // Initialize the Payment Sheet
+      const { error } = await initPaymentSheet({
+        paymentIntentClientSecret: paymentIntent,
+        customerEphemeralKeySecret: ephemeralKey,
+        customerId: customer,
+        merchantDisplayName: "Your Business Name",
+      });
+
+      if (error) {
+        console.error("Payment sheet initialization failed:", error);
+        Alert.alert("Error", error.message);
+        return false;
+      } else {
+        return true;
       }
-    };
+    } catch (error) {
+      console.error("Error initializing payment sheet:", error);
+      Alert.alert("Error", "Unable to initialize payment sheet.");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openPaymentSheet = async () => {
+    try {
+      // Present the Payment Sheet to the user
+      const { error } = await presentPaymentSheet();
+
+      if (error) {
+        console.error("Payment failed:", error);
+        Alert.alert("Error", error.message);
+        return false;
+      } else {
+        Alert.alert("Success", "Your payment was successful!");
+        return true;
+      }
+    } catch (error) {
+      console.error("Error presenting payment sheet:", error);
+      Alert.alert("Error", "Unable to complete payment.");
+      return false;
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={tw`p-5`}>
@@ -343,10 +346,19 @@ const AddToCartScreen = () => {
 
           {/* Add to Cart Button */}
           <TouchableOpacity
-            style={tw`bg-pink-500 p-3 rounded-lg mt-6`}
+            style={tw`p-3 rounded-lg mt-6 ${
+              loading ? "bg-gray-400" : "bg-pink-500"
+            }`}
             onPress={handleOrder}
+            disabled={loading}
           >
-            <Text style={tw`text-white text-lg text-center`}>Place Order</Text>
+            {loading ? (
+              <ActivityIndicator color="#ffffff" size="small" />
+            ) : (
+              <Text style={tw`text-white text-lg text-center`}>
+                Place Order
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>
