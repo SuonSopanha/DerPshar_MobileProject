@@ -127,86 +127,106 @@ const CartScreen = () => {
 
   return (
     <ScrollView style={tw`flex-1 bg-white p-4`}>
-      {products?.map((product, index) => (
-        <View key={index} style={tw`bg-pink-100 rounded-lg mb-4 p-3 shadow-sm`}>
-          <View style={tw`flex-row items-center`}>
-            <Image
-              source={{ uri: product.thumbnail }}
-              style={tw`w-16 h-16 rounded`}
-            />
-            <View style={tw`flex-1 ml-4`}>
-              <Text style={tw`text-base font-semibold text-gray-800`}>
-                {product.title}
-              </Text>
-              <TouchableOpacity onPress={() => navigation.navigate("Detail")}>
-                <Text style={tw`text-xs text-pink-500 mt-1`}>View Details</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={tw`flex-row items-center justify-between mt-4`}>
-            <View style={tw`flex-row items-center`}>
-              <TouchableOpacity
-                onPress={() => decreaseQuantity(product.id)}
-                style={tw`bg-gray-200 w-8 h-8 rounded-full flex items-center justify-center`}
-              >
-                <Ionicons name="remove" size={18} color="#333" />
-              </TouchableOpacity>
-
-              <Text style={tw`text-sm font-bold`}>
-                {cartList[index]?.quantity || 1}
-              </Text>
-
-              <TouchableOpacity
-                onPress={() => increaseQuantity(product.id)}
-                style={tw`bg-gray-200 w-8 h-8 rounded-full flex items-center justify-center`}
-              >
-                <Ionicons name="add" size={18} color="#333" />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() =>
-                  Alert.alert(
-                    "Remove Item",
-                    "Are you sure you want to remove this item from the cart?",
-                    [
-                      { text: "Cancel", style: "cancel" },
-                      {
-                        text: "Remove",
-                        onPress: () =>
-                          removeFromCart(product.id, cartList[index].documentId),
-                      },
-                    ]
-                  )
-                }
-                style={tw`ml-2`}
-              >
-                <Ionicons name="trash" size={20} color="#FF0000" />
-              </TouchableOpacity>
-            </View>
-
-            <Text style={tw`text-sm font-bold text-red-500`}>
-              $
-              {(
-                (cartList[index]?.quantity > 0
-                  ? product.price * cartList[index]?.quantity
-                  : product.price) || 0
-              ).toFixed(2)}
-            </Text>
-          </View>
+      {products.length === 0 ? (
+        <View style={tw`flex-1 items-center justify-center mt-20`}>
+          <Ionicons name="cart-outline" size={80} color="#FF69B4" />
+          <Text style={tw`text-lg text-gray-700 mt-4`}>
+            Your cart is empty.
+          </Text>
         </View>
-      ))}
+      ) : (
+        products.map((product, index) => (
+          <View
+            key={index}
+            style={tw`bg-pink-100 rounded-lg mb-4 p-3 shadow-sm`}
+          >
+            <View style={tw`flex-row items-center`}>
+              <Image
+                source={{ uri: product.thumbnail }}
+                style={tw`w-16 h-16 rounded`}
+              />
+              <View style={tw`flex-1 ml-4`}>
+                <Text style={tw`text-base font-semibold text-gray-800`}>
+                  {product.title}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Detail")}
+                >
+                  <Text style={tw`text-xs text-pink-500 mt-1`}>View Details</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
 
-      <View style={tw`items-center mb-10 mt-10`}>
-        <TouchableOpacity
-          style={tw`bg-pink-500 py-3 px-6 rounded-lg shadow-lg`}
-          onPress={prepareOrder}
-        >
-          <Text style={tw`text-white font-semibold text-lg`}>Buy Now</Text>
-        </TouchableOpacity>
-      </View>
+            <View style={tw`flex-row items-center justify-between mt-4`}>
+              <View style={tw`flex-row items-center`}>
+                <TouchableOpacity
+                  onPress={() => decreaseQuantity(product.id)}
+                  style={tw`bg-gray-200 w-8 h-8 rounded-full flex items-center justify-center`}
+                >
+                  <Ionicons name="remove" size={18} color="#333" />
+                </TouchableOpacity>
+
+                <Text style={tw`text-sm font-bold`}>
+                  {cartList[index]?.quantity || 1}
+                </Text>
+
+                <TouchableOpacity
+                  onPress={() => increaseQuantity(product.id)}
+                  style={tw`bg-gray-200 w-8 h-8 rounded-full flex items-center justify-center`}
+                >
+                  <Ionicons name="add" size={18} color="#333" />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() =>
+                    Alert.alert(
+                      "Remove Item",
+                      "Are you sure you want to remove this item from the cart?",
+                      [
+                        { text: "Cancel", style: "cancel" },
+                        {
+                          text: "Remove",
+                          onPress: () =>
+                            removeFromCart(
+                              product.id,
+                              cartList[index].documentId
+                            ),
+                        },
+                      ]
+                    )
+                  }
+                  style={tw`ml-2`}
+                >
+                  <Ionicons name="trash" size={20} color="#FF0000" />
+                </TouchableOpacity>
+              </View>
+
+              <Text style={tw`text-sm font-bold text-red-500`}>
+                $
+                {(
+                  (cartList[index]?.quantity > 0
+                    ? product.price * cartList[index]?.quantity
+                    : product.price) || 0
+                ).toFixed(2)}
+              </Text>
+            </View>
+          </View>
+        ))
+      )}
+
+      {products.length > 0 && (
+        <View style={tw`items-center mb-10 mt-10`}>
+          <TouchableOpacity
+            style={tw`bg-pink-500 py-3 px-6 rounded-lg shadow-lg`}
+            onPress={prepareOrder}
+          >
+            <Text style={tw`text-white font-semibold text-lg`}>Buy Now</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </ScrollView>
   );
+
 };
 
 export default CartScreen;
