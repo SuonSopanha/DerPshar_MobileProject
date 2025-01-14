@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { FontAwesome5, MaterialIcons, Entypo } from "@expo/vector-icons";
 import tw from "twrnc";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useNavigation } from "@react-navigation/native";
 
@@ -62,6 +63,11 @@ const HomeScreen = () => {
   const [productList, setProductList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userName, setUserName] = useState("");
+  const fetchUser = async () => {
+    const userName = await AsyncStorage.getItem("userName");
+    setUserName(userName);
+  };
 
   const navigation = useNavigation();
 
@@ -82,6 +88,7 @@ const HomeScreen = () => {
       }
     };
 
+    fetchUser();
     fetchProducts();
   }, []);
 
@@ -106,7 +113,7 @@ const HomeScreen = () => {
       {/* Search Bar */}
       <View style={tw`flex-row items-center justify-between mb-4`}>
         <Text style={tw`text-lg font-semibold text-gray-900`}>
-          Welcome, User!
+          Welcome, {userName || "User"}!
         </Text>
         <TouchableOpacity style={tw`p-2 rounded-full bg-gray-200`}>
           <Text style={tw`text-gray-600`}>👤</Text>
@@ -141,7 +148,15 @@ const HomeScreen = () => {
         style={tw`mb-8`}
       >
         {categories.map((category, idx) => (
-          <TouchableOpacity key={idx} style={tw`w-24 items-center mx-2`}>
+          <TouchableOpacity
+            key={idx}
+            style={tw`w-24 items-center mx-2`}
+            onPress={() =>
+              navigation.navigate("CategoryDetails", {
+                categoryName: category.name, // Pass category name to filter products in CategoryDetails
+              })
+            }
+          >
             <View
               style={tw`w-16 h-16 bg-white rounded-full items-center justify-center shadow-lg mb-2`}
             >
@@ -174,9 +189,11 @@ const HomeScreen = () => {
                 <TouchableOpacity
                   key={idx}
                   style={tw`w-40 bg-white rounded-lg shadow-lg mx-2 p-4`}
-                  onPress={() => navigation.navigate("Detail",{
-                    item: item
-                  })}
+                  onPress={() =>
+                    navigation.navigate("Detail", {
+                      item: item,
+                    })
+                  }
                 >
                   <Image
                     source={{ uri: item.thumbnail }}
@@ -193,9 +210,11 @@ const HomeScreen = () => {
                   </View>
                   <TouchableOpacity
                     style={tw`mt-2 bg-pink-500 py-2 rounded-full`}
-                    onPress={() => navigation.navigate("Detail",{
-                    item: item
-                  })}
+                    onPress={() =>
+                      navigation.navigate("Detail", {
+                        item: item,
+                      })
+                    }
                   >
                     <Text style={tw`text-white text-center font-semibold`}>
                       View Detail
